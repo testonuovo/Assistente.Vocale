@@ -1,96 +1,148 @@
-<!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Assistente Vocale</title>
-
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: white;
-            text-align: center;
-        }
-
-        .container {
-            padding: 80px 20px;
-        }
-
-        h1 {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-
-        p {
-            font-size: 20px;
-            margin-bottom: 30px;
-            color: #ddd;
-        }
-
-        .btn {
-            background: #00c853;
-            color: white;
-            padding: 15px 40px;
-            font-size: 20px;
-            border-radius: 12px;
-            text-decoration: none;
-            display: inline-block;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background: #00e676;
-            transform: scale(1.05);
-        }
-
-        .box {
-            margin-top: 50px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            display: inline-block;
-        }
-
-        footer {
-            margin-top: 60px;
-            font-size: 14px;
-            color: #aaa;
-        }
-    </style>
+<style>
+body{
+  background-color:yellow;
+  }
+h1{
+  color:blue;
+  text-align:center;
+  }
+p{
+ color:red;
+ }
+button
+{
+background-color:red;
+color:blue;
+border-radius:19px;
+}
+</style>  
+<title>Oreste AI</title>
 </head>
-
 <body>
+<h1>🎤 Oreste AI</h1>
+    <p>Il tuo assistente vocale online</p>
 
-<div class="container">
+    <!-- 🎤 Voce -->
+    <button onclick="startVoice()">🎤 Parla</button>
 
-    <h1>🎤 Assistente Vocale 1.0</h1>
+    <br><br>
 
-    <p>
-        Un assistente intelligente che esegue comandi vocali,<br>
-        apre programmi e siti web, include il karaoke e ti dice l'orario.
-    </p>
+    <!-- ⌨️ Testo -->
+    <input type="text" id="textInput" placeholder="Scrivi un comando..." style="padding:10px; width:250px;">
+    <button onclick="handleText()">Invia</button>
 
-    <p>Funziona con: Google, YouTube, Canva, blocco note e altro</p>
+    <p id="output"></p>
 
-    <a href="https://github.com/testonuovo/Assistente.Vocale/raw/main/AssistenteVocale.msi" class="btn">
-    ⬇ Scarica Installer
-</a>
+    <script>
 
-    <div class="box">
-        <h2>✨ Funzioni</h2>
-        <p>✔ Comandi vocali</p>
-        <p>✔ Apertura siti web</p>
-        <p>✔ Apertura programmi</p>
-        <p>✔ Karaoke integrato</p>
-        <p>✔ Ora vocale</p>
-    </div>
+        // 🎤 VOCE
+        function startVoice() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'it-IT';
+            recognition.start();
 
-</div>
+            recognition.onresult = function(event) {
+                let text = event.results[0][0].transcript.toLowerCase();
+                document.getElementById("output").innerText = "Hai detto: " + text;
+                handleCommand(text);
+            };
+        }
 
-<footer>
-    Creato da te 🚀 | Assistente Vocale Project
-</footer>
+        // ⌨️ TESTO
+        function handleText() {
+            let text = document.getElementById("textInput").value.toLowerCase();
+            document.getElementById("output").innerText = "Hai scritto: " + text;
+            handleCommand(text);
+        }
+
+        // 🔊 VOCE
+        function speak(text) {
+            let speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "it-IT";
+            window.speechSynthesis.speak(speech);
+        }
+
+        // 🌐 FUNZIONE APERTURA SITI
+        function openSite(nome, url) {
+            speak("Apro " + nome);
+            window.open(url, "_blank");
+        }
+
+        // 🧠 COMANDI
+        function handleCommand(text) {
+
+            // 🌐 siti principali
+            if (text.includes("apri google")) {
+                openSite("Google", "https://www.google.com");
+            }
+
+            else if (text.includes("apri youtube")) {
+                openSite("YouTube", "https://www.youtube.com");
+            }
+
+            else if (text.includes("apri canva")) {
+                openSite("Canva", "https://www.canva.com");
+            }
+
+            else if (text.includes("apri github")) {
+                openSite("GitHub", "https://github.com");
+            }
+
+            else if (text.includes("apri chatgpt")) {
+                openSite("Chat GPT", "https://chat.openai.com");
+            }
+
+            // 🌍 qualsiasi sito
+            else if (text.startsWith("apri ")) {
+                let sito = text.replace("apri ", "").trim();
+                let url = "https://www." + sito + ".com";
+                openSite(sito, url);
+            }
+
+            // 🔍 ricerca Google
+            else if (text.startsWith("cerca ")) {
+                let ricerca = text.replace("cerca ", "");
+                speak("Cerco " + ricerca);
+                let url = "https://www.google.com/search?q=" + ricerca;
+                window.open(url, "_blank");
+            }
+
+            // ⏰ orario
+            else if (text.includes("che ore sono")) {
+                let ora = new Date().toLocaleTimeString();
+                speak("Sono le " + ora);
+            }
+
+            // 📅 data
+            else if (text.includes("che giorno è")) {
+                let data = new Date().toLocaleDateString();
+                speak("Oggi è il " + data);
+            }
+
+            // 🧮 calcolo
+            else if (text.includes("calcola")) {
+                try {
+                    let risultato = eval(text.replace("calcola", ""));
+                    speak("Il risultato è " + risultato);
+                } catch {
+                    speak("Non riesco a calcolare");
+                }
+            }
+
+            // 😊 saluto
+            else if (text.includes("ciao")) {
+                speak("Ciao! Come posso aiutarti?");
+            }
+
+            // ❌ errore
+            else {
+                speak("Non ho capito il comando");
+            }
+        }
+
+    </script>
 
 </body>
 </html>
